@@ -1,0 +1,3 @@
+src/*.o
+bochs.out
+src/kernel
