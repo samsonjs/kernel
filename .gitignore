@@ -1,3 +1,4 @@
+.vagrant
 *.o
 kernel/bochs.out
 kernel/src/kernel
