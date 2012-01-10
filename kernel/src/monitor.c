@@ -1,7 +1,13 @@
+// monitor.c -- Defines functions for writing to the monitor.
+//             heavily based on Bran's kernel development tutorials,
+//             but rewritten for JamesM's kernel tutorials.
+
 #include "monitor.h"
 
 // The VGA framebuffer starts at 0xB8000.
 u16int *video_memory = (u16int *)0xB8000;
+
+// Stores the cursor position.
 u8int cursor_x = 0;
 u8int cursor_y = 0;
 
@@ -11,14 +17,10 @@ static void move_cursor()
     // The screen is 80 characters wide...
     u16int cursorLocation = cursor_y * 80 + cursor_x;
 
-    outb(0x3D4, 14);
-    // Tell the VGA board we are setting the high cursor byte.
-    outb(0x3D5, cursorLocation >> 8);
-    // Send the high cursor byte.
-    outb(0x3D4, 15);
-    // Tell the VGA board we are setting the low cursor byte.
-    outb(0x3D5, cursorLocation);
-    // Send the low cursor byte.
+    outb(0x3D4, 14);                  // Tell the VGA board we are setting the high cursor byte.
+    outb(0x3D5, cursorLocation >> 8); // Send the high cursor byte.
+    outb(0x3D4, 15);                  // Tell the VGA board we are setting the low cursor byte.
+    outb(0x3D5, cursorLocation);      // Send the low cursor byte.
 }
 
 // Scrolls the text on the screen up by one line.
@@ -127,7 +129,7 @@ void monitor_clear()
 }
 
 // Outputs a null-terminated ASCII string to the monitor.
-void monitor_write(char *c)
+void monitor_write(const char *c)
 {
     int i = 0;
     while (c[i]) {
@@ -137,24 +139,27 @@ void monitor_write(char *c)
 
 void monitor_newline() 
 {
-    while (cursor_x > 0) monitor_put(' ');
+    monitor_put('\n');
 }
 
 void monitor_write_hex(u32int n)
 {
-    static char hex_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                'a', 'b', 'c', 'd', 'e', 'f' };
-    u32int mask = 0xf0000000;
-    int i = 28;
-    while (i >= 0) {
-        monitor_put(hex_chars[(n & mask) >> i]);
-        mask >>= 4;
-        i -= 4;
-    }
+    static char chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                            'a', 'b', 'c', 'd', 'e', 'f' };
+    s32int tmp;
+    char onlyZeroes = 1;
+    int i;
+    for (i = 28; i >= 0; i -= 4) {
+        tmp = (n >> i) & 0xf;
+        if (tmp == 0 && onlyZeroes) {
+            continue;
+        }
+        onlyZeroes = 0;
+        monitor_put(chars[tmp]);
+    }  
 }
 
-u32int pow(base, exp)
-{
+u32int pow(base, exp) {
     u32int n = base;
     if (exp == 0) return 1;
     while (exp > 1) {
@@ -166,9 +171,44 @@ u32int pow(base, exp)
 
 void monitor_write_dec(u32int n)
 {
-    static char dec_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-    int i = 7;
-    while (i >= 0) {
-        monitor_put(dec_chars[(n / pow(10, i--)) % 10]);
+    static char chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };    
+    char onlyZeroes = 1;
+    int i;
+    int tmp;
+    if (n == 0) {
+        monitor_put('0');
+        return;
     }
+    for (i = 7; i >= 0; --i) {
+        tmp = (n / pow(10, i)) % 10;
+        if (tmp == 0 && onlyZeroes) {
+            continue;
+        }
+        onlyZeroes = 0;
+        monitor_put(chars[tmp]);
+    }
+}
+
+void monitor_write_dec2(u32int n) {
+
+    if (n == 0) {
+        monitor_put('0');
+        return;
+    }
+
+    s32int acc = n;
+    char c[32];
+    int i = 0;
+    for (; acc > 0; ++i, acc /=10) {
+        c[i] = '0' + acc % 10;
+    }
+    c[i] = 0;
+
+    char c2[32];
+    c2[i--] = 0;
+    int j = 0;
+    while(i >= 0) {
+        c2[i--] = c[j++];
+    }
+    monitor_write(c2);
 }

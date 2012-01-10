@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd src
+make
+success=$?
+cd ..
+if [ $success -eq 0 ]; then
+    sudo ./update_image.sh
+    sudo ./run_bochs.sh
+    grep -F 'CPU0' bochs.out
+fi

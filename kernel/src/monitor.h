@@ -13,7 +13,7 @@ void monitor_put(char c);
 void monitor_clear();
 
 // Output a null-terminated ASCII string to the monitor.
-void monitor_write(char *c);
+void monitor_write(const char *c);
 
 // Move the cursor to the next line
 void monitor_newline();
