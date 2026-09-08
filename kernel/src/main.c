@@ -2,6 +2,7 @@
 // Made for JamesM's tutorials
 
 #include "descriptor_tables.h"
+#include "kheap.h"
 #include "monitor.h"
 #include "paging.h"
 #include "timer.h"
@@ -29,8 +30,8 @@ int main(struct multiboot *mboot_ptr)
     monitor_write("\nc: ");
     monitor_write_hex(c);
 
-    kfree(c);
-    kfree(b);
+    kfree((void*)c);
+    kfree((void*)b);
     u32int d = kmalloc(12);
     monitor_write(", d: ");
     monitor_write_hex(d);

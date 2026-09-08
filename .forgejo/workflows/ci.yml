@@ -1,0 +1,27 @@
+# Build check only: there's no test suite for a tutorial kernel, and booting it
+# in bochs/qemu isn't something CI should do. Runs on the mudge host directly
+# because it has gcc-multilib (for -m32), nasm and binutils already, so no
+# container is needed.
+name: CI
+
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: mudge
+    steps:
+      - name: Check out
+        uses: https://git.samhuri.net/sjs/actions/checkout@v1
+        with:
+          require-file: Makefile
+
+      - name: Build both kernels
+        run: make
+
+      - name: Check the binaries are 32-bit ELF
+        run: file kernel/src/kernel user_mode/src/kernel

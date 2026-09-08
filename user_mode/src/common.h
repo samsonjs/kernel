@@ -17,6 +17,13 @@ void outb(u16int port, u8int value);
 u8int inb(u16int port);
 u16int inw(u16int port);
 
+void memcpy(void *dest, const void *src, u32int len);
+void memset(void *dest, u8int val, u32int len);
+int strcmp(char *str1, char *str2);
+char *strcpy(char *dest, const char *src);
+char *strcat(char *dest, const char *src);
+int strlen(char *src);
+
 #define PANIC(msg) panic(msg, __FILE__, __LINE__);
 #define ASSERT(b) ((b) ? (void)0 : panic_assert(__FILE__, __LINE__, #b))
 

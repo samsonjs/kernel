@@ -6,9 +6,9 @@
 SOURCES=boot.o main.o monitor.o common.o descriptor_tables.o isr.o interrupt.o gdt.o timer.o \
         kheap.o paging.o ordered_array.o fs.o initrd.o task.o process.o syscall.o
 
-CFLAGS=-nostdlib -nostdinc -fno-builtin
-LDFLAGS=-Tlink.ld
-ASFLAGS=-felf
+CFLAGS=-m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -fno-pie -fno-pic
+LDFLAGS=-m elf_i386 -T link.ld
+ASFLAGS=-f elf32
 
 all: $(SOURCES) link
 
@@ -19,4 +19,4 @@ link:
 	ld $(LDFLAGS) -o kernel $(SOURCES)
 
 .s.o:
-	yasm $(ASFLAGS) $<
+	nasm $(ASFLAGS) $<

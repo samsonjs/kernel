@@ -159,7 +159,7 @@ void monitor_write_hex(u32int n)
     }  
 }
 
-u32int pow(base, exp) {
+u32int pow(u32int base, u32int exp) {
     u32int n = base;
     if (exp == 0) return 1;
     while (exp > 1) {
