@@ -3,6 +3,7 @@
 
 #include "paging.h"
 #include "kheap.h"
+#include "monitor.h"
 
 // The kernel's page directory
 page_directory_t *kernel_directory=0;

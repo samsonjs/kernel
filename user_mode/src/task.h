@@ -26,7 +26,7 @@ typedef struct task
 void initialise_tasking();
 
 // Called by the timer hook, this changes the running process.
-void task_switch();
+void switch_task();
 
 // Forks the current process, spawning a new one with a different
 // memory space.
@@ -37,5 +37,8 @@ void move_stack(void *new_stack_start, u32int size);
 
 // Returns the pid of the current process.
 int getpid();
+
+// Drops to ring 3 and continues execution in user mode.
+void switch_to_user_mode();
 
 #endif

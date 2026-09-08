@@ -3,6 +3,7 @@
 
 #include "paging.h"
 #include "kheap.h"
+#include "monitor.h"
 
 // The kernel's page directory
 page_directory_t *kernel_directory=0;
@@ -17,6 +18,7 @@ u32int nframes;
 // Defined in kheap.c
 extern u32int placement_address;
 extern heap_t *kheap;
+extern void copy_page_physical(u32int src, u32int dest);
 
 // Macros used in the bitset algorithms.
 #define INDEX_FROM_BIT(a) (a/(8*4))
