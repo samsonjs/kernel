@@ -2,3 +2,4 @@
 *.o
 kernel/bochs.out
 kernel/src/kernel
+user_mode/src/kernel
